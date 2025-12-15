@@ -70,7 +70,7 @@
 <body>
   <div class="container">
     <h1>🎓 多元升学初探画像卡</h1>
-    <p style="text-align:center; color:#666;">说明：填后点击生成【生成我的AI升学提示语】并【一键复制】到平板智能体生成【多元升学路径推荐】</p>
+    <p style="text-align:center; color:#666;">填完后点击【生成我的AI升学提示语】，再【一键复制】到平板智能体，即可获得【多元升学路径推荐】</p>
 
     <div class="form-group">
       <label>学籍所在地</label>
@@ -214,14 +214,14 @@
       const vision = document.getElementById('vision').value.trim();
       const height = document.getElementById('height').value ? document.getElementById('height').value + 'cm' : '';
 
-      // 色盲/色弱：仅当选择“色盲/色弱”时输出，否则为空（不显示）
+      // 色盲/色弱：仅当选择“色盲/色弱”时输出
       const colorblind = document.getElementById('colorblind').value === '色盲/色弱' ? '色盲/色弱' : '';
 
       // 竞赛奖项
       const awardsRaw = document.getElementById('awards').value;
       const awardsOutput = (awardsRaw === '无') ? '无任何竞赛奖项' : awardsRaw;
 
-      // 艺术/体育特长
+      // 艺术/体育特长：注意 value 是简洁值（如“美术与设计”），显示文本带前缀
       const talentRaw = document.getElementById('talent').value;
       const talentOutput = (talentRaw === '无') ? '无任何艺术或体育特长' : talentRaw;
 
@@ -250,13 +250,19 @@
       resultDiv.style.display = 'block';
     }
 
+    // 健壮的复制函数（兼容 file:// 和 HTTPS）
     function copyText() {
       const text = document.getElementById('prompt-text').innerText;
-      if (navigator.clipboard) {
+
+      if (navigator.clipboard && window.isSecureContext) {
+        // 安全上下文（HTTPS）下使用现代 API
         navigator.clipboard.writeText(text).then(() => {
           alert('✅ 已复制！现在可以粘贴给AI智能体了。');
-        }).catch(fallbackCopy);
+        }).catch(() => {
+          fallbackCopy(text);
+        });
       } else {
+        // 非安全上下文（如本地 file://）降级处理
         fallbackCopy(text);
       }
     }
@@ -265,16 +271,25 @@
       const ta = document.createElement('textarea');
       ta.value = text;
       ta.style.position = 'fixed';
-      ta.style.opacity = '0';
+      ta.style.left = '-9999px';
+      ta.style.top = '-9999px';
+      ta.setAttribute('readonly', '');
       document.body.appendChild(ta);
       ta.select();
+      ta.setSelectionRange(0, text.length); // 兼容移动端
+
       try {
-        document.execCommand('copy');
-        alert('✅ 已复制（请勿关闭页面）');
+        const success = document.execCommand('copy');
+        if (success) {
+          alert('✅ 已复制（请勿关闭页面）');
+        } else {
+          alert('⚠️ 请手动长按选择文字复制');
+        }
       } catch (err) {
-        alert('请手动长按选择文字复制');
+        alert('⚠️ 请手动复制文本');
+      } finally {
+        document.body.removeChild(ta);
       }
-      document.body.removeChild(ta);
     }
   </script>
 </body>
