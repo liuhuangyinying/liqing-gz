@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>多元升学初探画像卡</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+      background: #f9fafb;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .container {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    h1 {
+      text-align: center;
+      color: #1a73e8;
+      margin-bottom: 24px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #333;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    button {
+      background: #1a73e8;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 18px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #0d62c9;
+    }
+    #result {
+      margin-top: 24px;
+      padding: 16px;
+      background: #f1f8ff;
+      border-left: 4px solid #1a73e8;
+      word-break: break-all;
+      display: none;
+    }
+    .copy-btn {
+      margin-top: 10px;
+      background: #34a853;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎓 多元升学初探画像卡</h1>
+    <p style="text-align:center; color:#666;">说明：填后点击生成【生成我的AI升学提示语】并【一键复制】到平板智能体生成【多元升学路径推荐】</p>
+
+    <div class="form-group">
+      <label>学籍所在地</label>
+      <input type="text" id="location" value="广州">
+    </div>
+    <div class="form-group">
+      <label>就读高中</label>
+      <input type="text" id="school" value="广州中学">
+    </div>
+    <div class="form-group">
+      <label>性别</label>
+      <select id="gender">
+        <option value="">请选择</option>
+        <option value="男">男</option>
+        <option value="女">女</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>是否社交型？</label>
+      <select id="social">
+        <option value="">请选择</option>
+        <option value="社交型">社交型</option>
+        <option value="非社交型">非社交型</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>年级</label>
+      <select id="grade">
+        <option value="">请选择</option>
+        <option value="一">高一</option>
+        <option value="二">高二</option>
+        <option value="三">高三</option>
+      </select>
+    </div>
+    
+    <!-- 年龄下拉框 -->
+    <div class="form-group">
+      <label>年龄（周岁）</label>
+      <select id="age">
+        <option value="">请选择</option>
+        <option value="小于15周岁">小于15周岁</option>
+        <option value="15周岁">15周岁</option>
+        <option value="16周岁">16周岁</option>
+        <option value="17周岁">17周岁</option>
+        <option value="大于17周岁">大于17周岁</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>成绩定位</label>
+      <input type="text" id="level" placeholder="例：年级前100名 / 目标特控线">
+    </div>
+    <div class="form-group">
+      <label>外语成绩</label>
+      <input type="text" id="lang" placeholder="例：英语90分 / 日语110分">
+    </div>
+    <div class="form-group">
+      <label>裸眼视力</label>
+      <input type="text" id="vision" placeholder="例：5.0 / 近视可矫正">
+    </div>
+    <div class="form-group">
+      <label>身高（cm）</label>
+      <input type="number" id="height" min="140" max="200" placeholder="数字即可">
+    </div>
+    
+    <!-- 色盲/色弱 -->
+    <div class="form-group">
+      <label>是否有色盲/色弱？</label>
+      <select id="colorblind">
+        <option value="">请选择</option>
+        <option value="色盲/色弱">色盲/色弱</option>
+        <option value="无色盲色弱">无色盲色弱</option>
+      </select>
+    </div>
+    
+    <!-- 竞赛奖项 -->
+    <div class="form-group">
+      <label>竞赛奖项</label>
+      <select id="awards">
+        <option value="无">无</option>
+        <option value="五大学科竞赛（数理化生信）">五大学科竞赛（数理化生信）</option>
+        <option value="青少年科技创新大赛">青少年科技创新大赛</option>
+        <option value="研究性学习课题成果">研究性学习课题成果</option>
+        <option value="市级以上三好学生/优秀干部">市级以上三好学生/优秀干部</option>
+        <option value="其他学术类奖项">其他学术类奖项</option>
+      </select>
+    </div>
+
+    <!-- 艺术或体育特长 -->
+    <div class="form-group">
+      <label>艺术或体育特长</label>
+      <select id="talent">
+        <option value="无">无</option>
+        <option value="美术与设计">艺术特长：美术与设计</option>
+        <option value="音乐（声乐/器乐）">艺术特长：音乐（声乐/器乐）</option>
+        <option value="舞蹈">艺术特长：舞蹈</option>
+        <option value="播音主持/表演">艺术特长：播音主持/表演</option>
+        <option value="书法">艺术特长：书法</option>
+        <option value="体育（非专业）">体育特长：体育（非专业）</option>
+        <option value="二级及以上运动员">体育特长：二级及以上运动员</option>
+      </select>
+    </div>
+
+    <!-- 是否接受定向就业 -->
+    <div class="form-group">
+      <label>是否接受定向就业？</label>
+      <select id="directed">
+        <option value="">请选择</option>
+        <option value="接受定向就业">接受定向就业</option>
+        <option value="不接受定向就业">不接受定向就业</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>家庭年承担高等教育费用</label>
+      <select id="budget">
+        <option value="">请选择</option>
+        <option value="2万以下">2万以下</option>
+        <option value="2-10万">2-10万</option>
+        <option value="10-15万">10-15万</option>
+        <option value="15-30万">15-30万</option>
+        <option value="30万以上">30万以上</option>
+      </select>
+    </div>
+
+    <button onclick="generatePrompt()">✨ 生成我的AI升学提示语</button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function generatePrompt() {
+      const location = document.getElementById('location').value.trim();
+      const school = document.getElementById('school').value.trim();
+      const gender = document.getElementById('gender').value;
+      const social = document.getElementById('social').value;
+      const grade = document.getElementById('grade').value;
+      const age = document.getElementById('age').value;
+      const level = document.getElementById('level').value.trim();
+      const lang = document.getElementById('lang').value.trim();
+      const vision = document.getElementById('vision').value.trim();
+      const height = document.getElementById('height').value ? document.getElementById('height').value + 'cm' : '';
+
+      // 色盲/色弱：仅当选择“色盲/色弱”时输出，否则为空（不显示）
+      const colorblind = document.getElementById('colorblind').value === '色盲/色弱' ? '色盲/色弱' : '';
+
+      // 竞赛奖项
+      const awardsRaw = document.getElementById('awards').value;
+      const awardsOutput = (awardsRaw === '无') ? '无任何竞赛奖项' : awardsRaw;
+
+      // 艺术/体育特长
+      const talentRaw = document.getElementById('talent').value;
+      const talentOutput = (talentRaw === '无') ? '无任何艺术或体育特长' : talentRaw;
+
+      // 定向就业
+      const directed = document.getElementById('directed').value;
+
+      // 预算
+      const budget = document.getElementById('budget').value;
+
+      // 拼接所有非空字段
+      const parts = [
+        location, school, gender, social, grade, age,
+        level, lang, vision, height, colorblind,
+        awardsOutput, talentOutput, directed, budget
+      ].filter(v => v !== '');
+
+      const prompt = parts.join(' ');
+
+      // 显示结果
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = `
+        <p><strong>你的AI升学提示语：</strong></p>
+        <div id="prompt-text">${prompt}</div>
+        <button class="copy-btn" onclick="copyText()">📋 一键复制</button>
+      `;
+      resultDiv.style.display = 'block';
+    }
+
+    function copyText() {
+      const text = document.getElementById('prompt-text').innerText;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+          alert('✅ 已复制！现在可以粘贴给AI智能体了。');
+        }).catch(fallbackCopy);
+      } else {
+        fallbackCopy(text);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        alert('✅ 已复制（请勿关闭页面）');
+      } catch (err) {
+        alert('请手动长按选择文字复制');
+      }
+      document.body.removeChild(ta);
+    }
+  </script>
+</body>
+</html>
