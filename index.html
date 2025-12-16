@@ -72,6 +72,7 @@
     <h1>🎓 多元升学初探画像卡</h1>
     <p style="text-align:center; color:#666;">填完后点击【生成我的AI升学提示语】，再【一键复制】到平板智能体，即可获得【多元升学路径推荐】</p>
 
+    <!-- 表单部分 -->
     <div class="form-group">
       <label>学籍所在地</label>
       <input type="text" id="location" value="广州">
@@ -209,8 +210,15 @@
       const social = document.getElementById('social').value;
       const grade = document.getElementById('grade').value;
       const age = document.getElementById('age').value;
-      const level = document.getElementById('level').value.trim();
-      const lang = document.getElementById('lang').value.trim();
+      const levelInput = document.getElementById('level').value.trim();
+      let level = '年级排名：' + levelInput; // 添加年级排名前缀
+      const langInput = document.getElementById('lang').value.trim();
+      let lang = ''; // 处理外语成绩
+      if (!isNaN(langInput)) {
+        lang = '英语' + langInput;
+      } else {
+        lang = langInput;
+      }
       const vision = document.getElementById('vision').value.trim();
       const height = document.getElementById('height').value ? document.getElementById('height').value + 'cm' : '';
 
@@ -250,23 +258,34 @@
       resultDiv.style.display = 'block';
     }
 
-    // 健壮的复制函数（兼容 file:// 和 HTTPS）
     function copyText() {
       const text = document.getElementById('prompt-text').innerText;
 
+      // 复制逻辑（保持不变）
+      let copied = false;
       if (navigator.clipboard && window.isSecureContext) {
-        // 安全上下文（HTTPS）下使用现代 API
         navigator.clipboard.writeText(text).then(() => {
-          alert('✅ 已复制！现在可以粘贴给AI智能体了。');
+          copied = true;
         }).catch(() => {
-          fallbackCopy(text);
+          copied = fallbackCopy(text);
         });
       } else {
-        // 非安全上下文（如本地 file://）降级处理
-        fallbackCopy(text);
+        copied = fallbackCopy(text);
       }
+
+      // 无论哪种方式，都在复制后处理跳转
+      setTimeout(() => {
+        if (copied !== false) {
+          alert('✅ 已复制！即将跳转至智能体平台...');
+          // 等待 alert 关闭后跳转（alert 阻塞，所以这行会在用户点确定后执行）
+          window.location.href = 'https://zt-rc.xdsy.cn/pages/index/index';
+        } else {
+          alert('⚠️ 请手动复制文本后再前往智能体平台');
+        }
+      }, 100);
     }
 
+    // 修改 fallbackCopy 使其返回是否成功
     function fallbackCopy(text) {
       const ta = document.createElement('textarea');
       ta.value = text;
@@ -276,19 +295,15 @@
       ta.setAttribute('readonly', '');
       document.body.appendChild(ta);
       ta.select();
-      ta.setSelectionRange(0, text.length); // 兼容移动端
+      ta.setSelectionRange(0, text.length);
 
       try {
         const success = document.execCommand('copy');
-        if (success) {
-          alert('✅ 已复制（请勿关闭页面）');
-        } else {
-          alert('⚠️ 请手动长按选择文字复制');
-        }
-      } catch (err) {
-        alert('⚠️ 请手动复制文本');
-      } finally {
         document.body.removeChild(ta);
+        return success;
+      } catch (err) {
+        document.body.removeChild(ta);
+        return false;
       }
     }
   </script>
