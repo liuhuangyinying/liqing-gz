@@ -32,12 +32,20 @@
       font-weight: 600;
       color: #333;
     }
+    label .required {
+      color: red;
+    }
     input, select, textarea {
       width: 100%;
       padding: 10px;
       border: 1px solid #ddd;
       border-radius: 6px;
       font-size: 16px;
+      box-sizing: border-box;
+    }
+    input.error-border, select.error-border {
+      border-color: #d93025 !important;
+      box-shadow: 0 0 0 2px rgba(217, 48, 37, 0.2);
     }
     button {
       background: #1a73e8;
@@ -65,247 +73,493 @@
       margin-top: 10px;
       background: #34a853;
     }
+    .error-text {
+      color: #d93025;
+      font-size: 14px;
+      margin-top: 4px;
+      min-height: 18px;
+    }
+    #school-other,
+    #social-district,
+    #social-other {
+      margin-top: 8px;
+      display: none;
+    }
+.checkbox-flow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.checkbox-flow label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  white-space: nowrap; /* 防止单个选项内部换行 */
+  font-size: 16px;
+  color: #333;
+}
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎓 多元升学初探画像卡</h1>
-    <p style="text-align:center; color:#666;">填完后点击【生成我的AI升学提示语】，再【一键复制】到平板智能体，即可获得【多元升学路径推荐】</p>
+<div class="container">
+  <h1>🎓 多元升学初探画像卡</h1>
+  <p style="text-align:center; color:#666;">请完整填写以下信息，点击【生成我的AI升学提示语】后，再【一键复制】到平板智能体，即可获得【多元升学路径推荐】</p>
 
-    <!-- 表单部分 -->
-    <div class="form-group">
-      <label>学籍所在地</label>
-      <input type="text" id="location" value="广州">
-    </div>
-    <div class="form-group">
-      <label>就读高中</label>
-      <input type="text" id="school" value="广州中学">
-    </div>
-    <div class="form-group">
-      <label>性别</label>
-      <select id="gender">
-        <option value="">请选择</option>
-        <option value="男">男</option>
-        <option value="女">女</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>是否社交型？</label>
-      <select id="social">
-        <option value="">请选择</option>
-        <option value="社交型">社交型</option>
-        <option value="非社交型">非社交型</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>年级</label>
-      <select id="grade">
-        <option value="">请选择</option>
-        <option value="一">高一</option>
-        <option value="二">高二</option>
-        <option value="三">高三</option>
-      </select>
-    </div>
-    
-    <!-- 年龄下拉框 -->
-    <div class="form-group">
-      <label>年龄（周岁）</label>
-      <select id="age">
-        <option value="">请选择</option>
-        <option value="小于15周岁">小于15周岁</option>
-        <option value="15周岁">15周岁</option>
-        <option value="16周岁">16周岁</option>
-        <option value="17周岁">17周岁</option>
-        <option value="大于17周岁">大于17周岁</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label>成绩定位</label>
-      <input type="text" id="level" placeholder="例：年级前100名 / 目标特控线">
-    </div>
-    <div class="form-group">
-      <label>外语成绩</label>
-      <input type="text" id="lang" placeholder="例：英语90分 / 日语110分">
-    </div>
-    <div class="form-group">
-      <label>裸眼视力</label>
-      <input type="text" id="vision" placeholder="例：5.0 / 近视可矫正">
-    </div>
-    <div class="form-group">
-      <label>身高（cm）</label>
-      <input type="number" id="height" min="140" max="200" placeholder="数字即可">
-    </div>
-    
-    <!-- 色盲/色弱 -->
-    <div class="form-group">
-      <label>是否有色盲/色弱？</label>
-      <select id="colorblind">
-        <option value="">请选择</option>
-        <option value="色盲/色弱">色盲/色弱</option>
-        <option value="无色盲色弱">无色盲色弱</option>
-      </select>
-    </div>
-    
-    <!-- 竞赛奖项 -->
-    <div class="form-group">
-      <label>竞赛奖项</label>
-      <select id="awards">
-        <option value="无">无</option>
-        <option value="五大学科竞赛（数理化生信）">五大学科竞赛（数理化生信）</option>
-        <option value="青少年科技创新大赛">青少年科技创新大赛</option>
-        <option value="研究性学习课题成果">研究性学习课题成果</option>
-        <option value="市级以上三好学生/优秀干部">市级以上三好学生/优秀干部</option>
-        <option value="其他学术类奖项">其他学术类奖项</option>
-      </select>
-    </div>
-
-    <!-- 艺术或体育特长 -->
-    <div class="form-group">
-      <label>艺术或体育特长</label>
-      <select id="talent">
-        <option value="无">无</option>
-        <option value="美术与设计">艺术特长：美术与设计</option>
-        <option value="音乐（声乐/器乐）">艺术特长：音乐（声乐/器乐）</option>
-        <option value="舞蹈">艺术特长：舞蹈</option>
-        <option value="播音主持/表演">艺术特长：播音主持/表演</option>
-        <option value="书法">艺术特长：书法</option>
-        <option value="体育（非专业）">体育特长：体育（非专业）</option>
-        <option value="二级及以上运动员">体育特长：二级及以上运动员</option>
-      </select>
-    </div>
-
-    <!-- 是否接受定向就业 -->
-    <div class="form-group">
-      <label>是否接受定向就业？</label>
-      <select id="directed">
-        <option value="">请选择</option>
-        <option value="接受定向就业">接受定向就业</option>
-        <option value="不接受定向就业">不接受定向就业</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label>家庭年承担高等教育费用</label>
-      <select id="budget">
-        <option value="">请选择</option>
-        <option value="2万以下">2万以下</option>
-        <option value="2-10万">2-10万</option>
-        <option value="10-15万">10-15万</option>
-        <option value="15-30万">15-30万</option>
-        <option value="30万以上">30万以上</option>
-      </select>
-    </div>
-
-    <button onclick="generatePrompt()">✨ 生成我的AI升学提示语</button>
-
-    <div id="result"></div>
+  <!-- 就读高中 -->
+  <div class="form-group">
+    <label>就读高中 <span class="required">*</span></label>
+    <select id="school">
+      <option value="">请选择</option>
+      <option value="深圳福海中学">深圳福海中学</option>
+      <option value="广州中学">广州中学</option>
+      <option value="中山纪念中学">中山纪念中学</option>
+      <option value="华南师范大学附属中学">华南师范大学附属中学</option>
+      <option value="other">其他</option>
+    </select>
+    <input type="text" id="school-other" placeholder="请输入您的高中名称">
+    <div class="error-text" id="err-school"></div>
   </div>
 
-  <script>
-    function generatePrompt() {
-      const location = document.getElementById('location').value.trim();
-      const school = document.getElementById('school').value.trim();
-      const gender = document.getElementById('gender').value;
-      const social = document.getElementById('social').value;
-      const grade = document.getElementById('grade').value;
-      const age = document.getElementById('age').value;
-      const levelInput = document.getElementById('level').value.trim();
-      let level = '年级排名：' + levelInput; // 添加年级排名前缀
-      const langInput = document.getElementById('lang').value.trim();
-      let lang = ''; // 处理外语成绩
-      if (!isNaN(langInput)) {
-        lang = '英语' + langInput;
-      } else {
-        lang = langInput;
-      }
-      const vision = document.getElementById('vision').value.trim();
-      const height = document.getElementById('height').value ? document.getElementById('height').value + 'cm' : '';
+  <!-- 学籍所在地 -->
+  <div class="form-group">
+    <label>学籍所在地 <span class="required">*</span></label>
+    <input type="text" id="location" value="" readonly>
+    <div class="error-text" id="err-location"></div>
+  </div>
 
-      // 色盲/色弱：仅当选择“色盲/色弱”时输出
-      const colorblind = document.getElementById('colorblind').value === '色盲/色弱' ? '色盲/色弱' : '';
 
-      // 竞赛奖项
-      const awardsRaw = document.getElementById('awards').value;
-      const awardsOutput = (awardsRaw === '无') ? '无任何竞赛奖项' : awardsRaw;
+  <!-- 户籍类型（两级联动） -->
+  <div class="form-group">
+    <label>户籍类型 <span class="required">*</span></label>
+    <select id="social-city" onchange="updateSocialDistrict()">
+      <option value="">请选择城市</option>
+   <option value="深圳">深圳</option>
+   <option value="广州">广州</option>
+   <option value="中山">中山</option>
+      <option value="汕头">汕头</option>
+      <option value="韶关">韶关</option>
+      <option value="河源">河源</option>
+      <option value="梅州">梅州</option>
+      <option value="汕尾">汕尾</option>
+      <option value="阳江">阳江</option>
+      <option value="湛江">湛江</option>
+      <option value="茂名">茂名</option>
+      <option value="清远">清远</option>
+      <option value="潮州">潮州</option>
+      <option value="揭阳">揭阳</option>
+      <option value="云浮">云浮</option>
+      <option value="惠州">惠州</option>
+      <option value="肇庆">肇庆</option>
+      <option value="other">其他</option>
+    </select>
+    <select id="social-district" disabled>
+      <option value="">请选择县/区</option>
+    </select>
+    <input type="text" id="social-other" placeholder="请输入您的户籍城市">
+    <div class="error-text" id="err-social"></div>
+  </div>
+  <!-- 性别 -->
+  <div class="form-group">
+    <label>性别 <span class="required">*</span></label>
+    <select id="gender">
+      <option value="">请选择</option>
+      <option value="男">男</option>
+      <option value="女">女</option>
+    </select>
+    <div class="error-text" id="err-gender"></div>
+  </div>
 
-      // 艺术/体育特长：注意 value 是简洁值（如“美术与设计”），显示文本带前缀
-      const talentRaw = document.getElementById('talent').value;
-      const talentOutput = (talentRaw === '无') ? '无任何艺术或体育特长' : talentRaw;
+  <!-- 年级 -->
+  <div class="form-group">
+    <label>当前年级 <span class="required">*</span></label>
+    <select id="grade">
+      <option value="">请选择</option>
+      <option value="高一">高一</option>
+      <option value="高二">高二</option>
+      <option value="高三">高三</option>
+    </select>
+    <div class="error-text" id="err-grade"></div>
+  </div>
 
-      // 定向就业
-      const directed = document.getElementById('directed').value;
+  <!-- 年龄 -->
+  <div class="form-group">
+    <label>年龄（周岁）<span class="required">*</span></label>
+    <select id="age">
+      <option value="">请选择</option>
+      <option value="小于15周岁">小于15周岁</option>
+      <option value="15周岁">15周岁</option>
+      <option value="16周岁">16周岁</option>
+      <option value="17周岁">17周岁</option>
+      <option value="大于17周岁">大于17周岁</option>
+    </select>
+    <div class="error-text" id="err-age"></div>
+  </div>
 
-      // 预算
-      const budget = document.getElementById('budget').value;
+  <!-- 成绩定位 -->
+  <div class="form-group">
+    <label>成绩定位 <span class="required">*</span></label>
+    <input type="text" id="level" placeholder="预测或经过努力达到的目标，例：年级100名（可直接输入数字）/目标特控线/特控线下/目标985/目标211">
+    <div class="error-text" id="err-level"></div>
+  </div>
 
-      // 拼接所有非空字段
-      const parts = [
-        location, school, gender, social, grade, age,
-        level, lang, vision, height, colorblind,
-        awardsOutput, talentOutput, directed, budget
-      ].filter(v => v !== '');
+  <!-- 英语成绩 -->
+  <div class="form-group">
+    <label>英语成绩 <span class="required">*</span></label>
+    <input type="number" id="lang" min="0" max="150" placeholder="数字即可，150分制度">
+    <div class="error-text" id="err-lang"></div>
+  </div>
 
-      const prompt = parts.join(' ');
+  <!-- 裸眼视力 -->
+  <div class="form-group">
+    <label>裸眼视力 <span class="required">*</span></label>
+    <select id="vision">
+      <option value="">请选择</option>
+      <option value="4.8及以上">4.8及以上（近视250以下）</option>
+      <option value="4.7">4.7（近视约250~300度）</option>
+	<option value="4.6">4.6（近视约300~350度）</option>
+	<option value="4.5">4.5（近视约350~450度）</option>
+	<option value="4.0-4.4">4.0–4.4（近视约450~850度）</option>
+	<option value="低于4.0">低于4.0（近视约850度以上）</option>
+    </select>
+    <div class="error-text" id="err-vision"></div>
+  </div>
 
-      // 显示结果
-      const resultDiv = document.getElementById('result');
-      resultDiv.innerHTML = `
-        <p><strong>你的AI升学提示语：</strong></p>
-        <div id="prompt-text">${prompt}</div>
-        <button class="copy-btn" onclick="copyText()">📋 一键复制</button>
-      `;
-      resultDiv.style.display = 'block';
+
+  <!-- 身高 -->
+  <div class="form-group">
+    <label>身高（cm）<span class="required">*</span></label>
+    <input type="number" id="height" min="140" max="220" placeholder="例如：175">
+    <div class="error-text" id="err-height"></div>
+  </div>
+
+  <!-- 色觉 -->
+  <div class="form-group">
+    <label>色觉状况 <span class="required">*</span></label>
+    <select id="colorblind">
+      <option value="">请选择</option>
+      <option value="正常">正常</option>
+      <option value="色盲/色弱">色盲/色弱</option>
+    </select>
+    <div class="error-text" id="err-colorblind"></div>
+  </div>
+
+
+
+<!-- 职业倾向（多选） -->
+<div class="form-group">
+  <label>职业倾向(不勾选默认不考虑以下所有职业方向)</label>
+  <div id="career-preference-container" class="checkbox-flow">
+    <label><input type="checkbox" value="医学"> 医学</label>
+    <label><input type="checkbox" value="教师"> 教师</label>
+    <label><input type="checkbox" value="军警公安"> 军警公安</label>
+    <label><input type="checkbox" value="飞行员"> 飞行员</label>
+    <label><input type="checkbox" value="航海"> 航海</label>
+  </div>
+</div>
+
+  <!-- 是否接受定向就业 -->
+  <div class="form-group">
+    <label>是否接受边远/经济较落后地区的定向就业（6年左右）？<span class="required">*</span></label>
+    <select id="directed">
+      <option value="">请选择</option>
+      <option value="接受定向就业">接受</option>
+      <option value="不接受定向就业">不接受</option>
+    </select>
+    <div class="error-text" id="err-directed"></div>
+  </div>
+
+  <!-- 家庭预算 -->
+  <div class="form-group">
+    <label>家庭可接受的学费范围（每年）<span class="required">*</span></label>
+    <select id="budget">
+      <option value="">请选择</option>
+      <option value="2万以下">2万以下</option>
+      <option value=2万~10万">2万~10万</option>
+      <option value="10万~15万">10万~15万</option>
+      <option value="15万~30万">15万~30万</option>
+      <option value="15万~30万">30万以上</option>
+    </select>
+    <div class="error-text" id="err-budget"></div>
+  </div>
+  <!-- 竞赛奖项 -->
+  <div class="form-group">
+    <label>竞赛奖项</label>
+    <select id="awards">
+      <option value="无">无</option>
+      <option value="五大学科竞赛（数理化生信）">五大学科竞赛（数理化生信）</option>
+      <option value="青少年科技创新大赛">青少年科技创新大赛</option>
+      <option value="研究性学习课题成果">研究性学习课题成果</option>
+      <option value="市级以上三好学生/优秀干部">市级以上三好学生/优秀干部</option>
+      <option value="其他学术类奖项">其他学术类奖项</option>
+    </select>
+  </div>
+
+  <!-- 艺术或体育特长 -->
+  <div class="form-group">
+    <label>艺术或体育特长</label>
+    <select id="talent">
+      <option value="无">无</option>
+      <option value="美术与设计">艺术特长：美术与设计</option>
+      <option value="音乐（声乐/器乐）">艺术特长：音乐（声乐/器乐）</option>
+      <option value="舞蹈">艺术特长：舞蹈</option>
+      <option value="播音主持/表演">艺术特长：播音主持/表演</option>
+      <option value="书法">艺术特长：书法</option>
+      <option value="体育（非专业）">体育特长：体育（非专业）</option>
+      <option value="二级及以上运动员">体育特长：二级及以上运动员</option>
+    </select>
+  </div>
+  <button onclick="generatePrompt()">✨ 生成我的AI升学提示语</button>
+
+  <div id="result"></div>
+</div>
+
+<script>
+  // 学校到学籍地的映射
+  const schoolToLocation = {
+    "深圳福海中学": "深圳",
+    "广州中学": "广州",
+    "中山纪念中学": "中山",
+    "华南师范大学附属中学": "广州"
+  };
+
+  // 更新学籍所在地
+  function updateLocationBySchool() {
+    const schoolSelect = document.getElementById('school');
+    const locationInput = document.getElementById('location');
+    const selectedSchool = schoolSelect.value;
+
+    if (selectedSchool && selectedSchool !== 'other' && schoolToLocation[selectedSchool]) {
+      locationInput.value = schoolToLocation[selectedSchool];
+      locationInput.readOnly = true; // 预设学校时锁定
+    } else if (selectedSchool === 'other') {
+      locationInput.value = '';
+      locationInput.readOnly = false; // 其他时可编辑
+    } else {
+      locationInput.value = '';
+      locationInput.readOnly = false;
     }
+  }
 
-    function copyText() {
-      const text = document.getElementById('prompt-text').innerText;
+  // 绑定学校下拉框变化事件
+  document.getElementById('school').addEventListener('change', function () {
+    const otherInput = document.getElementById('school-other');
+    if (this.value === 'other') {
+      otherInput.style.display = 'block';
+      otherInput.focus();
+    } else {
+      otherInput.style.display = 'none';
+      otherInput.value = '';
+    }
+    updateLocationBySchool(); // ✅ 修复：正确调用函数（无空格）
+  });
 
-      // 复制逻辑（保持不变）
-      let copied = false;
-      if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(() => {
-          copied = true;
-        }).catch(() => {
-          copied = fallbackCopy(text);
-        });
-      } else {
-        copied = fallbackCopy(text);
-      }
+  // 页面加载时初始化
+  window.addEventListener('DOMContentLoaded', updateLocationBySchool);
 
-      // 无论哪种方式，都在复制后处理跳转
-      setTimeout(() => {
-        if (copied !== false) {
-          alert('✅ 已复制！即将跳转至智能体平台...');
-          // 等待 alert 关闭后跳转（alert 阻塞，所以这行会在用户点确定后执行）
-          window.location.href = 'https://zt-rc.xdsy.cn/pages/index/index';
-        } else {
-          alert('⚠️ 请手动复制文本后再前往智能体平台');
+  // 获取最终学校名称
+  function getSchoolValue() {
+    const selectVal = document.getElementById('school').value;
+    if (selectVal === 'other') {
+      return document.getElementById('school-other').value.trim();
+    }
+    return selectVal;
+  }
+
+// 获取职业倾向（多选）
+function getCareerPreferenceValues() {
+  const container = document.getElementById('career-preference-container');
+  const checked = Array.from(container.querySelectorAll('input[type="checkbox"]:checked'))
+    .map(cb => cb.value);
+  return checked.join("/"); // 若无选中，join 返回 ""
+}
+  // 户籍县区映射
+  const socialDistrictMap = {
+    "韶关": ["南雄"],
+    "河源": ["龙川", "连平", "和平", "紫金"],
+    "梅州": ["梅江", "梅县", "大埔", "丰顺", "五华", "平远", "蕉岭", "兴宁"],
+    "汕尾": ["城区", "陆河", "海丰", "陆丰"],
+    "阳江": ["阳山", "连州"],
+    "清远": ["连山", "连南"],
+    "潮州": ["饶平"],
+    "揭阳": ["揭西", "惠来", "普宁"],
+    "云浮": ["新丰", "乐昌"],
+    "惠州": ["惠东", "龙门"],
+    "肇庆": ["广宁", "德庆", "封开", "怀集"]
+  };
+
+  function updateSocialDistrict() {
+    const citySelect = document.getElementById("social-city");
+    const districtSelect = document.getElementById("social-district");
+    const otherInput = document.getElementById("social-other");
+
+    const city = citySelect.value;
+
+    // 重置
+    districtSelect.innerHTML = '<option value="">请选择县/区</option>';
+    districtSelect.style.display = "none";
+    districtSelect.disabled = true;
+    otherInput.style.display = "none";
+    otherInput.value = "";
+
+    if (city === "other") {
+      otherInput.style.display = "block";
+    } else if (socialDistrictMap[city]) {
+      socialDistrictMap[city].forEach(d => {
+        const opt = document.createElement("option");
+        opt.value = city + d;
+        opt.textContent = d;
+        districtSelect.appendChild(opt);
+      });
+      districtSelect.style.display = "block";
+      districtSelect.disabled = false;
+    }
+  }
+
+function getSocialValue() {
+  const city = document.getElementById("social-city").value;
+
+  if (city === "other") {
+    const otherVal = document.getElementById("social-other").value.trim();
+    return otherVal ? "户籍" + otherVal : "";
+  }
+
+  if (!city) {
+    return "";
+  }
+
+  const district = document.getElementById("social-district").value;
+  // 如果有有效的区县选择（且该城市支持区县）
+  if (district && socialDistrictMap[city]) {
+    return "户籍" + district;
+  } else {
+    return "户籍" + city;
+  }
+}
+
+  // 生成提示语
+  function generatePrompt() {
+    const requiredFields = [
+      { id: 'location', errId: 'err-location', getValue: () => document.getElementById('location').value.trim() },
+      { id: 'school', errId: 'err-school', getValue: getSchoolValue },
+      { id: 'gender', errId: 'err-gender', getValue: () => document.getElementById('gender').value },
+      { id: 'social', errId: 'err-social', getValue: getSocialValue },
+      { id: 'grade', errId: 'err-grade', getValue: () => document.getElementById('grade').value },
+      { id: 'age', errId: 'err-age', getValue: () => document.getElementById('age').value },
+      { id: 'level', errId: 'err-level', getValue: () => document.getElementById('level').value.trim() },
+      { id: 'lang', errId: 'err-lang', getValue: () => document.getElementById('lang').value.trim() },
+      { id: 'vision', errId: 'err-vision', getValue: () => document.getElementById('vision').value.trim() },
+      { id: 'height', errId: 'err-height', getValue: () => document.getElementById('height').value },
+      { id: 'colorblind', errId: 'err-colorblind', getValue: () => document.getElementById('colorblind').value },
+      { id: 'directed', errId: 'err-directed', getValue: () => document.getElementById('directed').value },
+      { id: 'budget', errId: 'err-budget', getValue: () => document.getElementById('budget').value }
+    ];
+
+    // 清除旧错误
+    document.querySelectorAll('.error-text').forEach(el => el.textContent = '');
+    document.querySelectorAll('.error-border').forEach(el => el.classList.remove('error-border'));
+
+    let firstErrorElement = null;
+    for (const field of requiredFields) {
+      const value = field.getValue();
+      if (!value) {
+        let errorEl = document.getElementById(field.id);
+        if (field.id === 'school' && document.getElementById('school').value === 'other') {
+          errorEl = document.getElementById('school-other');
         }
-      }, 100);
-    }
-
-    // 修改 fallbackCopy 使其返回是否成功
-    function fallbackCopy(text) {
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.left = '-9999px';
-      ta.style.top = '-9999px';
-      ta.setAttribute('readonly', '');
-      document.body.appendChild(ta);
-      ta.select();
-      ta.setSelectionRange(0, text.length);
-
-      try {
-        const success = document.execCommand('copy');
-        document.body.removeChild(ta);
-        return success;
-      } catch (err) {
-        document.body.removeChild(ta);
-        return false;
+        errorEl.classList.add('error-border');
+        document.getElementById(field.errId).textContent = '此项为必填';
+        if (!firstErrorElement) firstErrorElement = errorEl;
       }
     }
-  </script>
+
+    if (firstErrorElement) {
+      firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      firstErrorElement.focus();
+      return;
+    }
+
+    // 构建提示语
+    const location = '学籍' + document.getElementById('location').value.trim();
+    const school = '就读' + getSchoolValue();
+    const social = getSocialValue();
+  const gender = document.getElementById('gender').value;
+    const grade = document.getElementById('grade').value;
+    const age = document.getElementById('age').value;
+    // 成绩定位处理：纯数字 → 年级XX名
+    let levelInput = document.getElementById('level').value.trim();
+    let level;
+    if (/^\d+$/.test(levelInput)) {
+       level = `年级${levelInput}名`;
+    } else {
+       level = levelInput;
+    }
+    const langScore = document.getElementById('lang').value.trim();
+    const lang = !isNaN(langScore) ? `英语${langScore}分` : langScore;
+    const vision = '裸眼视力' + document.getElementById('vision').value.trim();
+    const height = document.getElementById('height').value + 'cm';
+    const colorblind = document.getElementById('colorblind').value === '色盲/色弱' ? '色盲/色弱' : '';
+    const awardsRaw = document.getElementById('awards').value.trim() || '无';
+    const awardsOutput = (awardsRaw === '无') ? '无任何竞赛奖项' : awardsRaw;
+    const talentRaw = document.getElementById('talent').value.trim() || '无';
+    const talentOutput = (talentRaw === '无') ? '无任何艺术或体育特长' : talentRaw;
+    const directed = document.getElementById('directed').value;
+    const budget = document.getElementById('budget').value;
+    const rawCareer = getCareerPreferenceValues();
+    const careerPreferences = rawCareer ? `考虑${rawCareer}职业方向` : '';
+    const parts = [
+      location, school, social, gender, grade, age,
+      level, lang, vision, height, colorblind,
+      awardsOutput, talentOutput,careerPreferences, directed, budget
+    ].filter(v => v !== '');
+
+    const prompt = parts.join(' ');
+
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = `
+      <p><strong>你的AI升学提示语：</strong></p>
+      <div id="prompt-text">${prompt}</div>
+      <button class="copy-btn" onclick="copyText()">📋 一键复制</button>
+    `;
+    resultDiv.style.display = 'block';
+  }
+
+  // 复制并跳转
+  function copyText() {
+    const text = document.getElementById('prompt-text').innerText;
+    let copied = false;
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => copied = true).catch(() => copied = fallbackCopy(text));
+    } else {
+      copied = fallbackCopy(text);
+    }
+
+    setTimeout(() => {
+      if (copied) {
+        alert('✅ 已复制！即将跳转至智能体平台...');
+        window.location.href = 'https://zt-rc.xdsy.cn/pages/index/index';
+      } else {
+        alert('⚠️ 请手动复制文本后再前往智能体平台');
+      }
+    }, 100);
+  }
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    ta.style.top = '-9999px';
+    ta.setAttribute('readonly', '');
+    document.body.appendChild(ta);
+    ta.select();
+    const success = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return success;
+  }
+</script>
 </body>
 </html>
