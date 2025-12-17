@@ -166,6 +166,16 @@
     <div class="error-text" id="err-social"></div>
   </div>
 
+  <div class="form-group">
+    <label>民族 <span class="required">*</span></label>
+    <select id="ethnicity">
+      <option value="">请选择</option>
+      <option value="汉族">汉族</option>
+      <option value="少数民族">少数民族</option>
+    </select>
+    <div class="error-text" id="err-ethnicity"></div>
+  </div>
+
   <!-- 性别 -->
   <div class="form-group">
     <label>性别 <span class="required">*</span></label>
@@ -211,7 +221,7 @@
       <option value="985/211">985/211（不低于600分）</option>
       <option value="特控线">特控线（高考大概540分）</option>
       <option value="本科线">本科线（物理436分/历史464分）</option>
-      <option value="大专线">大专线</option>
+      <option value="专科线">专科线</option>
     </select>
     <div class="error-text" id="err-level"></div>
   </div>
@@ -301,19 +311,45 @@
       <option value="是">是，我擅长沟通与表达</option>
       <option value="否">否，我更偏向安静或独立工作</option>
     </select>
- <div class="error-text" id="err-social-type"></div>
+    <div class="error-text" id="err-social-type"></div>
   </div>
 
-  <!-- 竞赛奖项 -->
+  <!-- 竞赛奖项（新结构） -->
   <div class="form-group">
     <label>竞赛奖项</label>
-    <select id="awards">
-      <option value="无">无</option>
-      <option value="五大学科竞赛（数理化生信）">五大学科竞赛（数理化生信）</option>
-      <option value="青少年科技创新大赛">青少年科技创新大赛</option>
-      <option value="研究性学习课题成果">研究性学习课题成果</option>
-      <option value="市级以上三好学生/优秀干部">市级以上三好学生/优秀干部</option>
-      <option value="其他学术类奖项">其他学术类奖项</option>
+    <select id="contest-type" onchange="updateAwardLevelOptions()">
+      <option value="">请选择竞赛</option>
+      <optgroup label="数学类">
+        <option value="cmo">全国中学生数学奥林匹克（CMO）</option>
+        <option value="math-province">全国高中数学联赛（省级赛区）</option>
+      </optgroup>
+      <optgroup label="物理类">
+        <option value="cpho">全国中学生物理奥林匹克（CPhO）</option>
+        <option value="phys-province">全国中学生物理竞赛（省级赛区）</option>
+      </optgroup>
+      <optgroup label="化学类">
+        <option value="ccho">全国中学生化学奥林匹克（CChO）</option>
+        <option value="chem-province">全国高中学生化学竞赛（省级赛区）</option>
+      </optgroup>
+      <optgroup label="生物类">
+        <option value="cbo">全国中学生生物学奥林匹克（CBO）</option>
+        <option value="bio-province">全国中学生生物学联赛（省级赛区）</option>
+      </optgroup>
+      <optgroup label="信息学类">
+        <option value="noi">全国青少年信息学奥林匹克（NOI）</option>
+        <option value="noip">全国青少年信息学奥林匹克联赛（NOIP/省赛）</option>
+      </optgroup>
+      <optgroup label="其他学术与综合荣誉">
+        <option value="innovation-contest">青少年科技创新大赛</option>
+        <option value="research-project">研究性学习课题成果</option>
+        <option value="merit-student">市级以上三好学生/优秀干部</option>
+        <option value="other-academic">其他学术类奖项</option>
+        <option value="non-academic">非学科类竞赛（不适用于强基/英才班）</option>
+      </optgroup>
+    </select>
+
+    <select id="award-level" disabled>
+      <option value="">请选择奖项</option>
     </select>
   </div>
 
@@ -373,7 +409,6 @@
     updateLocationBySchool();
   });
 
-
   window.addEventListener('DOMContentLoaded', () => {
     updateLocationBySchool();
   });
@@ -390,21 +425,22 @@
     const container = document.getElementById('career-preference-container');
     const checked = Array.from(container.querySelectorAll('input[type="checkbox"]:checked'))
       .map(cb => cb.value);
-    return checked.join("/");
+    return checked.length > 0 ? checked.join("、") : "无";
   }
 
+  // ✅ 完整补充后的 socialDistrictMap（覆盖 SPECIAL_AREAS + 常规区）
   const socialDistrictMap = {
-    "韶关": ["南雄"],
-    "河源": ["龙川", "连平", "和平", "紫金"],
-    "梅州": ["梅江", "梅县", "大埔", "丰顺", "五华", "平远", "蕉岭", "兴宁"],
-    "汕尾": ["城区", "陆河", "海丰", "陆丰"],
-    "阳江": ["阳春", "阳东", "阳西"], // 修正：原为“阳山”属清远
-    "清远": ["清城", "清新", "佛冈", "英德", "连州", "连山", "连南"],
-    "潮州": ["湘桥", "潮安", "饶平"],
-    "揭阳": ["榕城", "揭东", "揭西", "惠来", "普宁"],
-    "云浮": ["云城", "云安", "新兴", "郁南", "罗定"],
-    "惠州": ["惠城", "惠阳", "博罗", "惠东", "龙门"],
-    "肇庆": ["端州", "鼎湖", "广宁", "怀集", "封开", "德庆", "高要", "四会"]
+    "韶关": ["浈江区", "武江区", "曲江区", "南雄", "乐昌", "仁化", "始兴", "翁源", "新丰", "乳源"],
+    "河源": ["源城区", "东源", "龙川", "连平", "和平", "紫金"],
+    "梅州": ["梅江区", "梅县区", "兴宁", "大埔", "丰顺", "五华", "平远", "蕉岭"],
+    "汕尾": ["城区", "陆丰", "海丰", "陆河"],
+    "阳江": ["江城区", "阳东区", "阳西县", "阳春市"],
+    "清远": ["清城区", "清新区", "英德", "连州", "佛冈", "阳山", "连南", "连山"],
+    "潮州": ["湘桥区", "潮安区", "饶平"],
+    "揭阳": ["榕城区", "揭东区", "普宁", "揭西", "惠来"],
+    "云浮": ["云城区", "云安区", "罗定", "新兴", "郁南"],
+    "惠州": ["惠城区", "惠阳区", "博罗", "惠东", "龙门"],
+    "肇庆": ["端州区", "鼎湖区", "高要区", "四会", "广宁", "怀集", "封开", "德庆"]
   };
 
   function updateSocialDistrict() {
@@ -434,35 +470,67 @@
     }
   }
 
-function getSocialValue() {
-  const city = document.getElementById("social-city").value;
-  if (!city) return "";
-
-  if (city === "other") {
-    const otherVal = document.getElementById("social-other").value.trim();
-    if (!otherVal) return "";
-    return "户籍" + otherVal;
-  }
-
-  // 如果该城市有区县列表，则必须选一个区县
-  if (socialDistrictMap[city]) {
-    const district = document.getElementById("social-district").value;
-    // 区县不是必填？根据需求这里可以放宽
-    // 如果你希望“即使有区县也不强制选”，那就去掉下面的判断
-    // 否则保留
-    if (!district) {
-      // 注意：如果你决定区县不强制，就直接返回 city 即可
-      return "户籍" + city; // 不强制区县
+  function getSocialCityValue() {
+    const city = document.getElementById("social-city").value;
+    if (city === "other") {
+      return document.getElementById("social-other").value.trim();
     }
-    return "户籍" + city + district;
-  } else {
-    // 如深圳、广州等无区县列表的城市，直接用城市
-    return "户籍" + city;
+    return city;
   }
-}
+
+  function getSocialDistrictValue() {
+    const city = document.getElementById("social-city").value;
+    if (socialDistrictMap[city]) {
+      return document.getElementById("social-district").value || "";
+    }
+    return "";
+  }
+
+  // 🏆 新增：竞赛奖项联动逻辑
+  const awardLevelMap = {
+    "cmo": ["国赛金牌", "国赛银牌", "国赛铜牌", "省队入选"],
+    "math-province": ["省一", "省二", "省三"],
+    "cpho": ["国赛金牌", "国赛银牌", "国赛铜牌", "省队入选"],
+    "phys-province": ["省一", "省二", "省三"],
+    "ccho": ["国赛金牌", "国赛银牌", "国赛铜牌", "省队入选"],
+    "chem-province": ["省一", "省二", "省三"],
+    "cbo": ["国赛金牌", "国赛银牌", "国赛铜牌", "省队入选"],
+    "bio-province": ["省一", "省二", "省三"],
+    "noi": ["国赛金牌", "国赛银牌", "国赛铜牌", "省队入选"],
+    "noip": ["省一", "省二", "省三"],
+    "innovation-contest": ["国家级一等奖", "国家级二等奖", "省级一等奖", "省级二等奖", "市级一等奖"],
+    "research-project": ["校级优秀", "市级优秀", "省级优秀", "国家级优秀"],
+    "merit-student": ["市级三好/优干", "省级三好/优干"],
+    "other-academic": ["其他"],
+    "non-academic": ["其他"]
+  };
+
+  function updateAwardLevelOptions() {
+    const contestType = document.getElementById("contest-type").value;
+    const awardLevelSelect = document.getElementById("award-level");
+    awardLevelSelect.innerHTML = '<option value="">请选择奖项</option>';
+    awardLevelSelect.disabled = true;
+
+    if (contestType && awardLevelMap[contestType]) {
+      awardLevelMap[contestType].forEach(level => {
+        const opt = document.createElement("option");
+        opt.value = level;
+        opt.textContent = level;
+        awardLevelSelect.appendChild(opt);
+      });
+      awardLevelSelect.disabled = false;
+    }
+  }
+
+  function getAwardsText() {
+    const contest = document.getElementById("contest-type").value;
+    const level = document.getElementById("award-level").value;
+    if (!contest) return "无";
+    const contestLabel = document.querySelector(`#contest-type option[value="${contest}"]`)?.textContent || contest;
+    return level ? `${contestLabel} ${level}` : contestLabel;
+  }
 
   function generatePrompt() {
-    // 所有必填字段校验
     const fields = [
       {
         id: 'school',
@@ -475,6 +543,12 @@ function getSocialValue() {
         element: () => document.getElementById('school').value === 'other' ? document.getElementById('school-other') : document.getElementById('school')
       },
       {
+        id: 'ethnicity',
+        errId: 'err-ethnicity',
+        getValue: () => document.getElementById('ethnicity').value,
+        element: () => document.getElementById('ethnicity')
+      },
+      {
         id: 'location',
         errId: 'err-location',
         getValue: () => document.getElementById('location').value.trim(),
@@ -483,7 +557,12 @@ function getSocialValue() {
       {
         id: 'social',
         errId: 'err-social',
-        getValue: getSocialValue,
+        getValue: () => {
+          const city = getSocialCityValue();
+          if (!city) return "";
+          const district = getSocialDistrictValue();
+          return district ? city + district : city;
+        },
         element: () => {
           const city = document.getElementById('social-city').value;
           if (city === 'other') return document.getElementById('social-other');
@@ -520,7 +599,6 @@ function getSocialValue() {
       { id: 'social-type', errId: 'err-social-type', getValue: () => document.getElementById('social-type').value, element: () => document.getElementById('social-type') }
     ];
 
-    // 清除旧错误
     document.querySelectorAll('.error-text').forEach(el => el.textContent = '');
     document.querySelectorAll('.error-border').forEach(el => el.classList.remove('error-border'));
 
@@ -541,49 +619,63 @@ function getSocialValue() {
       return;
     }
 
-    // 构建提示语
-    const location = '学籍' + document.getElementById('location').value.trim();
-    const school = '就读' + getSchoolValue();
-    const social = getSocialValue();
-    const gender = document.getElementById('gender').value;
-    const grade = document.getElementById('grade').value;
-    const age = document.getElementById('age').value;
-    const level = '目标' + document.getElementById('level').value;
-    const langScore = document.getElementById('lang').value.trim();
-    const lang = !isNaN(langScore) ? `英语${langScore}分` : '';
-    const vision = '裸眼视力' + document.getElementById('vision').value.trim();
-    const height = document.getElementById('height').value + 'cm';
-    const colorblind = document.getElementById('colorblind').value === '色盲/色弱' ? '色盲/色弱' : '视觉正常';
-    const awardsRaw = document.getElementById('awards').value.trim() || '无';
-    const awardsOutput = (awardsRaw === '无') ? '无任何竞赛奖项' : awardsRaw;
-    const talentRaw = document.getElementById('talent').value.trim() || '无';
-    const talentOutput = (talentRaw === '无') ? '无任何艺术或体育特长' : talentRaw;
-    const directed = document.getElementById('directed').value;
-    const budget = document.getElementById('budget').value;
-    const rawCareer = getCareerPreferenceValues();
-    const careerPreferences = rawCareer ? `考虑${rawCareer}职业方向` : '';
-    const socialType = document.getElementById('social-type').value;
-    const socialTypeOutput = socialType ? (socialType === '是' ? '社交型学生（擅长沟通表达）' : '非社交型学生') : '';
+    const school = "就读高中：" + getSchoolValue() + "；";
+    const location = "学籍所在地：" + document.getElementById('location').value.trim() + "；";
+    const socialCity = getSocialCityValue();
+    const socialDistrict = getSocialDistrictValue();
+    const hukou = "户籍所在地：" + (socialDistrict ? socialCity + socialDistrict : socialCity) + "；";
+    const ethnicityText = "民族：" + document.getElementById('ethnicity').value + "；";
+    const gender = "性别：" + document.getElementById('gender').value + "；";
+    const grade = "当前年级：" + document.getElementById('grade').value + "；";
+    const ageRaw = document.getElementById('age').value;
+    const ageNum = ageRaw.includes("15") ? "15" : ageRaw.includes("16") ? "16" : ageRaw.includes("17") ? "17" : ageRaw.includes("小于") ? "14" : "18";
+    const age = "年龄：" + ageNum + "；";
+    const levelMap = {
+      "985/211": "985/211",
+      "特控线": "特控线",
+      "本科线": "本科线",
+      "专科线": "专科线"
+    };
+    const level = "分数线：" + levelMap[document.getElementById('level').value] + "；";
+    const lang = "英语成绩：" + document.getElementById('lang').value.trim() + "；";
+    const vision = "裸眼视力：" + document.getElementById('vision').options[document.getElementById('vision').selectedIndex].textContent.split("（")[0].trim() + "；";
+    const height = "身高：" + document.getElementById('height').value + "；";
+    
+    // ✅ 使用新竞赛奖项文本
+    const awards = "竞赛奖项：" + getAwardsText() + "；";
+    
+    const talent = "特长：" + (document.getElementById('talent').value === "无" ? "无" : document.getElementById('talent').value.replace("艺术特长：", "").replace("体育特长：", "")) + "；";
+    const career = "考虑的职业方向：" + getCareerPreferenceValues() + "；";
+    const directed = "定向意愿：" + (document.getElementById('directed').value === "接受定向就业" ? "愿意" : "不愿意") + "；";
+    const socialTypeText = "是否社交型：" + (document.getElementById('social-type').value === "是" ? "是" : "否") + "；";
+    const colorblindText = "色觉状况：" + document.getElementById('colorblind').value + "；";
 
-    const parts = [
-      location, school, social, gender, grade, age,
-      level, lang, vision, height, colorblind,
-      awardsOutput, talentOutput, careerPreferences, socialTypeOutput, directed, budget
-    ].filter(v => v !== '');
+    const budgetRaw = document.getElementById('budget').value;
+    let budgetText = "";
+    if (budgetRaw === "2万以下") budgetText = "2万以下";
+    else if (budgetRaw === "2万~10万") budgetText = "10万以下";
+    else if (budgetRaw === "10万~15万") budgetText = "15万以下";
+    else if (budgetRaw === "15万~30万") budgetText = "30万以下";
+    else if (budgetRaw === "30万以上") budgetText = "30万以上";
+    const budget = "家庭可接受的学费范围：" + budgetText;
 
-    const prompt = parts.join(' ');
+    const prompt = [
+      school, location, hukou, ethnicityText, gender, grade, age,
+      level, lang, vision, height, awards, talent,
+      career, directed, socialTypeText, colorblindText, budget
+    ].join("");
 
     const resultDiv = document.getElementById('result');
     resultDiv.innerHTML = `
       <p><strong>你的AI升学提示语：</strong></p>
-      <div id="prompt-text">${prompt}</div>
+      <div id="prompt-text" style="font-family: monospace; white-space: pre-wrap; word-break: break-all;">${prompt}</div>
       <button class="copy-btn" onclick="copyText()">📋 一键复制</button>
     `;
     resultDiv.style.display = 'block';
   }
 
   function copyText() {
-    const text = document.getElementById('prompt-text').innerText;
+    const text = document.getElementById('prompt-text').textContent;
     let copied = false;
 
     if (navigator.clipboard && window.isSecureContext) {
