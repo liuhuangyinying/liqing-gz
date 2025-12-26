@@ -687,7 +687,8 @@
     setTimeout(() => {
       if (copied) {
         alert('✅ 已复制！即将跳转至智能体平台...');
-        window.location.href = 'https://zt-rc.xdsy.cn/pages/index/index';
+        // window.location.href = 'https://zt-rc.xdsy.cn/pages/index/index';
+		  window.history.back(); // ← 返回上一页
       } else {
         alert('⚠️ 请手动复制文本后再前往智能体平台');
       }
@@ -710,4 +711,5 @@
 </script>
 </body>
 </html>
+
 
