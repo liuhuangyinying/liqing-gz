@@ -112,6 +112,7 @@
     <label>就读高中 <span class="required">*</span></label>
     <select id="school">
       <option value="">请选择</option>
+	  <option value="深圳市致理中学">深圳市致理中学</option>
       <option value="博罗县华侨中学">博罗县华侨中学</option>
       <option value="深圳福海中学">深圳福海中学</option>
       <option value="广州中学">广州中学</option>
@@ -230,7 +231,7 @@
   <!-- 英语成绩 -->
   <div class="form-group">
     <label>英语成绩 <span class="required">*</span></label>
-    <input type="number" id="lang" min="0" max="150" placeholder="数字即可，150分制度">
+    <input type="number" id="lang" min="0" max="150" step="1"  placeholder="数字即可，150分制度" oninput="this.value = this.value.replace(/[^0-9]/g, '')>
     <div class="error-text" id="err-lang"></div>
   </div>
 
@@ -375,6 +376,7 @@
 
 <script>
   const schoolToLocation = {
+	"深圳市致理中学":"深圳",
 	"博罗县华侨中学":"惠州",
     "深圳福海中学": "深圳",
     "广州中学": "广州",
@@ -713,6 +715,7 @@
 </script>
 </body>
 </html>
+
 
 
 
